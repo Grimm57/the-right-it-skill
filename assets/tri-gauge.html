@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRI 计量仪 — BusU — 把通勤巴士变成课堂</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --fg:#e8eaed; --muted:#9aa3b2;
+    --line:#252a34; --ok:#3ddc97; --warn:#ffc857; --bad:#ff6b6b;
+    --c10:#c0392b; --c30:#e67e22; --c50:#8e8e93; --c70:#4f8cff; --c90:#3ddc97;
+  }
+  @media (prefers-color-scheme: light){
+    :root{--bg:#fbfbfd;--card:#fff;--fg:#14171c;--muted:#5f6774;--line:#e6e9ef;}
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--fg);padding:32px 20px;
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  .wrap{max-width:960px;margin:0 auto}
+  h1{font-size:24px;letter-spacing:-.02em;margin-bottom:6px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:28px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;margin-bottom:20px}
+  .axis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px}
+  .axis div{
+    text-align:center;font-size:12px;color:var(--muted);padding:8px 4px;
+    border-bottom:3px solid var(--line);
+  }
+  .axis div b{display:block;font-size:15px;color:var(--fg);margin-bottom:2px}
+  .lane{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+    align-items:center;padding:9px 0;border-bottom:1px dashed var(--line);
+  }
+  .lane:last-child{border-bottom:0}
+  .dot{
+    width:100%;height:16px;border-radius:4px;background:transparent;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .dot.on{position:relative}
+  .dot.on::after{
+    content:"";width:0;height:0;
+    border-top:8px solid transparent;border-bottom:8px solid transparent;
+    border-right:13px solid currentColor;
+    filter:drop-shadow(0 0 4px currentColor);
+  }
+  .lname{font-size:13px;color:var(--muted);margin-top:2px}
+  .floor{
+    margin-top:20px;padding:14px 18px;border-radius:10px;
+    background:rgba(192,57,43,.12);border:1px solid rgba(192,57,43,.4);
+    color:var(--c10);font-size:13px;
+  }
+  @media (prefers-color-scheme: dark){ .floor{color:#ff8a7a} }
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:500;font-size:12px}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .summary{display:flex;gap:28px;flex-wrap:wrap;margin-top:4px}
+  .stat b{display:block;font-size:26px;letter-spacing:-.02em}
+  .stat span{color:var(--muted);font-size:12px}
+  .pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;margin-top:12px}
+  .pill.ok{background:rgba(61,220,151,.15);color:var(--ok)}
+  .pill.warn{background:rgba(255,200,87,.15);color:var(--warn)}
+  .pill.bad{background:rgba(255,107,107,.15);color:var(--bad)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="title"></h1>
+  <p class="sub">TRI 计量仪（"正确的它"计量仪）· 由《做对产品》方法论生成</p>
+
+  <div class="card">
+    <div class="summary" id="summary"></div>
+    <div id="pill"></div>
+  </div>
+
+  <div class="card">
+    <div class="axis">
+      <div><b>10%</b>非常不可能</div>
+      <div><b>30%</b>不可能</div>
+      <div><b>50%</b>50/50</div>
+      <div><b>70%</b>有可能</div>
+      <div><b>90%</b>非常有可能</div>
+    </div>
+    <div id="lanes"></div>
+    <div class="floor">
+      ▲ 市场失败律：大多数新产品都将在市场上失败，即使所有环节执行到位也避免不了。
+      只有多次一致的正面结果才能抵消它。
+    </div>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th>试验</th><th>假说预测</th><th>实际结果</th><th>样本</th>
+        <th>刻度</th><th>判定依据</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const DATA = {"creative": "BusU — 把通勤巴士变成课堂", "lanes": [{"name": "落地页测试", "idx": 4, "score": 90, "predicted": 40.0, "actual": 62.0, "n": 100, "reason": "数据大大超过假说预测", "note": "未提及价格，保守下调一档"}, {"name": "修正版落地页", "idx": 3, "score": 70, "predicted": 20.0, "actual": 22.0, "n": 100, "reason": "数据达到或略微超过假说预测", "note": ""}, {"name": "付费课程测试", "idx": 4, "score": 90, "predicted": 10.0, "actual": 24.0, "n": 200, "reason": "数据大大超过假说预测", "note": "48人实际付费"}, {"name": "复购测试", "idx": 4, "score": 90, "predicted": 30.0, "actual": 48.0, "n": 44, "reason": "数据大大超过假说预测", "note": "21/44 复购"}, {"name": "长课程测试", "idx": 0, "score": 10, "predicted": 10.0, "actual": 0.0, "n": 132, "reason": "数据远低于假说预测", "note": "明确证伪"}], "positives": 4, "negatives": 1, "k": 5, "need": 5, "avg": 70.0};
+const COLORS = ['--c10','--c30','--c50','--c70','--c90'];
+const LABELS = ['非常不可能','不可能','50/50','有可能','非常有可能'];
+const SCORES = [10,30,50,70,90];
+
+document.getElementById('title').textContent = 'TRI 计量仪 — ' + DATA.creative;
+
+const s = document.getElementById('summary');
+s.innerHTML = `
+  <div class="stat"><b>${DATA.k}</b><span>已运行试验次数</span></div>
+  <div class="stat"><b>${DATA.avg}%</b><span>平均成功可能性</span></div>
+  <div class="stat"><b>${DATA.positives} / ${DATA.negatives}</b><span>正面 / 负面</span></div>
+  <div class="stat"><b>${DATA.need}</b><span>建议最少试验次数</span></div>
+`;
+
+const pill = document.getElementById('pill');
+let cls = 'ok', msg = '试验次数达标，结果方向明确。';
+if (DATA.k < DATA.need) { cls='warn'; msg=`试验次数不足（${DATA.k}/${DATA.need}）。单次或少数几次试验永远不够——需要继续测试才能对抗市场失败律。`; }
+if (DATA.positives && DATA.negatives) { cls='warn'; msg += ' 同时存在明确正面与明确负面结果：可能只有部分版本成立，建议按版本分别判定。'; }
+if (!DATA.positives && DATA.negatives) { cls='bad'; msg='目前没有正面结果。多数情况下，正确做法是回到绘图板调整创意，而不是加大投入。'; }
+pill.innerHTML = `<span class="pill ${cls}">${msg}</span>`;
+
+const lanes = document.getElementById('lanes');
+const tbody = document.getElementById('tbody');
+
+DATA.lanes.forEach((l, i) => {
+  const row = document.createElement('div');
+  row.className = 'lane';
+  for (let c = 0; c < 5; c++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (c === l.idx ? ' on' : '');
+    if (c === l.idx) d.style.color = `var(${COLORS[c]})`;
+    row.appendChild(d);
+  }
+  lanes.appendChild(row);
+
+  const name = document.createElement('div');
+  name.className = 'lname';
+  name.textContent = `试验 #${i+1} · ${l.name}`;
+  lanes.appendChild(name);
+
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>#${i+1} ${l.name}${l.note ? `<br><span style="color:var(--muted);font-size:12px">${l.note}</span>` : ''}</td>
+    <td class="num">≥${l.predicted}%</td>
+    <td class="num">${l.actual}%</td>
+    <td class="num">${l.n}</td>
+    <td style="color:var(${COLORS[l.idx]});font-weight:600">${l.score}% ${LABELS[l.idx]}</td>
+    <td style="color:var(--muted)">${l.reason}</td>
+  `;
+  tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>

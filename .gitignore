@@ -1,0 +1,26 @@
+# 原书 PDF 仅作本地参考，请勿提交（版权原因）
+*.pdf
+做对产品.pdf
+
+# 生成的报告与可视化
+tri.html
+report*.html
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env
+
+# 本地试验数据（可能含商业机密）
+local/
+*.local.json
+
+# 操作系统 / 编辑器
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

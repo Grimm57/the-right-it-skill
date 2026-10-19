@@ -1,0 +1,12 @@
+{
+  "creative": "通勤巴士变课堂：把早高峰通勤巴士改造成 45 分钟线下微课",
+  "evidence": [
+    {"type": "email", "label": "落地页收集的已验证邮箱", "count": 120},
+    {"type": "phone", "label": "留下并验证的电话", "count": 18},
+    {"type": "time", "label": "参加 60 分钟免费宣讲会", "count": 30, "unit_minutes": 60},
+    {"type": "money", "label": "199 元首月预售订单", "count": 12, "amount_each": 199},
+    {"type": "opinion", "label": "用户访谈正面反馈", "count": 25},
+    {"type": "opd", "label": "行业报告与竞品分析", "count": 3},
+    {"type": "vanity", "label": "宣传视频浏览量", "count": 80000}
+  ]
+}

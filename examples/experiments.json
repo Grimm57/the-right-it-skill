@@ -1,0 +1,57 @@
+{
+  "creative": "通勤巴士变课堂：把早高峰通勤巴士改造成 45 分钟线下微课",
+  "experiments": [
+    {
+      "id": 1,
+      "name": "落地页邮箱测试",
+      "hypothesis": "xyz1",
+      "predicted_pct": 40,
+      "actual_pct": 46,
+      "n": 250,
+      "confounded": false,
+      "note": "首屏明示 199 元/月，避免「以为免费」污染"
+    },
+    {
+      "id": 2,
+      "name": "电话验证测试",
+      "hypothesis": "xyz2",
+      "predicted_pct": 25,
+      "actual_pct": 30,
+      "n": 100,
+      "confounded": false,
+      "note": "提交邮箱后 24 小时内电话确认通勤路线"
+    },
+    {
+      "id": 3,
+      "name": "50 元定金测试",
+      "hypothesis": "xyz3",
+      "predicted_pct": 10,
+      "actual_pct": 4,
+      "n": 60,
+      "confounded": false,
+      "note": "定金可全额退；结果明显低于预测"
+    },
+    {
+      "id": 4,
+      "name": "预售复测",
+      "hypothesis": "xyz4",
+      "predicted_pct": 40,
+      "actual_pct": 41,
+      "n": 200,
+      "confounded": false,
+      "note": "更换线路后复测，验证结果是否可重复"
+    },
+    {
+      "id": 5,
+      "name": "首周复购测试",
+      "hypothesis": "xyz5",
+      "predicted_pct": 20,
+      "actual_pct": 0,
+      "n": 12,
+      "confounded": true,
+      "note": "样本仅 12 人，且遇暴雨停运，数据受污染"
+    }
+  ],
+  "investment_level": "medium",
+  "min_experiments": 5
+}
